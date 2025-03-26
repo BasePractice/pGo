@@ -20,6 +20,8 @@ jobs:
 
       - name: Build server
         run: go build -v ./cmd/server/main.go
+      - name: Build client
+        run: GOOS=js GOARCH=wasm go build -v ./cmd/client/main.go
 
       - name: Test
         run: go test -v ./...
