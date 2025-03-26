@@ -72,6 +72,16 @@ func (g *Game) move(x, y int) {
 	g.y = y
 }
 
+func (g *Game) moveBox(x, y int) {
+	//TODO: Реализовать перемещение
+	if g.x != x || g.y != y {
+		g.d.Update(g.v)
+		g.change(x, y)
+	}
+	g.x = x
+	g.y = y
+}
+
 func (g *Game) mayMoving(x, y int) bool {
 	if g.v[y][x] == maps.TailNone || g.v[x][y] == maps.TailSpot {
 		return true
@@ -90,6 +100,8 @@ func (g *Game) Left() {
 	nX := g.x - 1
 	if g.mayMoving(nX, g.y) {
 		g.move(nX, g.y)
+	} else if g.isBox(nX, g.x) && g.mayMoving(nX-1, g.y) {
+		g.moveBox(nX, g.y)
 	}
 }
 func (g *Game) Right() {
