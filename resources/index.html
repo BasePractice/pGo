@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script src="wasm_exec.js"></script>
+    <script>
+        if (WebAssembly) {
+            const go = new Go();
+            WebAssembly.instantiateStreaming(fetch("client.wasm"), go.importObject).then((result) => {
+                go.run(result.instance);
+            });
+        } else {
+            console.log("WebAssembly is not supported in your browser")
+        }
+    </script>
+    <title>Sokoban</title>
+</head>
+<body></body>
+</html>
