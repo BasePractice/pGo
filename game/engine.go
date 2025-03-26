@@ -64,38 +64,44 @@ func Ctor(mapName string, drawer Updater) (*Game, error) {
 }
 
 func (g *Game) moviePlayerTo(x, y int) {
-	if g.v[g.x][g.y] == maps.TailPlayer {
-		if g.v[x][y] == maps.TailSpot {
-			g.v[x][y] = maps.TailPlayerAndSpot
+	if g.v[g.y][g.x] == maps.TailPlayer {
+		if g.v[y][x] == maps.TailSpot {
+			g.v[y][x] = maps.TailPlayerAndSpot
 		} else {
-			g.v[x][y] = maps.TailPlayer
+			g.v[y][x] = maps.TailPlayer
 		}
-		g.v[g.x][g.y] = maps.TailNone
-	} else if g.v[g.x][g.y] == maps.TailPlayerAndSpot {
-		if g.v[x][y] == maps.TailSpot {
-			g.v[x][y] = maps.TailPlayerAndSpot
+		g.v[g.y][g.x] = maps.TailNone
+	} else if g.v[g.y][g.x] == maps.TailPlayerAndSpot {
+		if g.v[y][x] == maps.TailSpot {
+			g.v[y][x] = maps.TailPlayerAndSpot
 		} else {
-			g.v[x][y] = maps.TailPlayer
+			g.v[y][x] = maps.TailPlayer
 		}
-		g.v[g.x][g.y] = maps.TailSpot
+		g.v[g.y][g.x] = maps.TailSpot
 	}
 }
 
 func (g *Game) moving(to mover) {
 	nX := g.x + to.dX
-	nY := g.x + to.dY
+	nY := g.y + to.dY
 	if g.mayMoving(nX, nY) {
 		g.movePlayer(nX, nY)
 	} else if g.isBox(nX, nY) && g.mayMoving(nX+to.dX, nY+to.dY) {
 		g.moveBox(nX+to.dX, nY+to.dY)
+		if g.v[nY][nX] == maps.TailBox {
+			g.v[nY][nX] = maps.TailNone
+		} else if g.v[nY][nX] == maps.TailBoxAndSpot {
+			g.v[nY][nX] = maps.TailSpot
+		}
+
 		g.movePlayer(nX, nY)
 	}
 }
 
 func (g *Game) movePlayer(x, y int) {
 	if g.x != x || g.y != y {
-		g.d.Update(g.v)
 		g.moviePlayerTo(x, y)
+		g.d.Update(g.v)
 		g.Steps++
 	}
 	g.x = x
@@ -103,25 +109,22 @@ func (g *Game) movePlayer(x, y int) {
 }
 
 func (g *Game) moveBox(x, y int) {
-	//TODO: Реализовать перемещение
-	if g.x != x || g.y != y {
-		g.d.Update(g.v)
-		g.moviePlayerTo(x, y)
-		g.Steps++
+	if g.v[y][x] == maps.TailSpot {
+		g.v[y][x] = maps.TailBoxAndSpot
+	} else {
+		g.v[y][x] = maps.TailBox
 	}
-	g.x = x
-	g.y = y
 }
 
 func (g *Game) mayMoving(x, y int) bool {
-	if g.v[y][x] == maps.TailNone || g.v[x][y] == maps.TailSpot {
+	if g.v[y][x] == maps.TailNone || g.v[y][x] == maps.TailSpot {
 		return true
 	}
 	return false
 }
 
 func (g *Game) isBox(x, y int) bool {
-	if g.v[y][x] == maps.TailBox || g.v[x][y] == maps.TailBoxAndSpot {
+	if g.v[y][x] == maps.TailBox || g.v[y][x] == maps.TailBoxAndSpot {
 		return true
 	}
 	return false
