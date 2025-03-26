@@ -2,6 +2,18 @@ package game
 
 import "sokoban/game/maps"
 
+var (
+	MoveLeft  = mover{dX: -1, dY: 0}
+	MoveRight = mover{dX: 1, dY: 0}
+	MoveUp    = mover{dX: 0, dY: -1}
+	MoveDown  = mover{dX: 0, dY: 1}
+)
+
+type mover struct {
+	dX int
+	dY int
+}
+
 type Game struct {
 	Steps   int    `json:"steps"`
 	MapName string `json:"map_name"`
@@ -15,6 +27,12 @@ type Game struct {
 
 type Updater interface {
 	Update(v [][]maps.Tail)
+}
+
+type EmptyUpdater struct{}
+
+func (e EmptyUpdater) Update(v [][]maps.Tail) {
+
 }
 
 type Mover interface {
@@ -45,7 +63,7 @@ func Ctor(mapName string, drawer Updater) (*Game, error) {
 	return &Game{0, mapName, m.Values, false, false, drawer, x, y}, nil
 }
 
-func (g *Game) change(x, y int) {
+func (g *Game) moviePlayerTo(x, y int) {
 	if g.v[g.x][g.y] == maps.TailPlayer {
 		if g.v[x][y] == maps.TailSpot {
 			g.v[x][y] = maps.TailPlayerAndSpot
@@ -63,10 +81,22 @@ func (g *Game) change(x, y int) {
 	}
 }
 
-func (g *Game) move(x, y int) {
+func (g *Game) moving(to mover) {
+	nX := g.x + to.dX
+	nY := g.x + to.dY
+	if g.mayMoving(nX, nY) {
+		g.movePlayer(nX, nY)
+	} else if g.isBox(nX, nY) && g.mayMoving(nX+to.dX, nY+to.dY) {
+		g.moveBox(nX+to.dX, nY+to.dY)
+		g.movePlayer(nX, nY)
+	}
+}
+
+func (g *Game) movePlayer(x, y int) {
 	if g.x != x || g.y != y {
 		g.d.Update(g.v)
-		g.change(x, y)
+		g.moviePlayerTo(x, y)
+		g.Steps++
 	}
 	g.x = x
 	g.y = y
@@ -76,7 +106,8 @@ func (g *Game) moveBox(x, y int) {
 	//TODO: Реализовать перемещение
 	if g.x != x || g.y != y {
 		g.d.Update(g.v)
-		g.change(x, y)
+		g.moviePlayerTo(x, y)
+		g.Steps++
 	}
 	g.x = x
 	g.y = y
@@ -97,18 +128,14 @@ func (g *Game) isBox(x, y int) bool {
 }
 
 func (g *Game) Left() {
-	nX := g.x - 1
-	if g.mayMoving(nX, g.y) {
-		g.move(nX, g.y)
-	} else if g.isBox(nX, g.x) && g.mayMoving(nX-1, g.y) {
-		g.moveBox(nX, g.y)
-	}
+	g.moving(MoveLeft)
 }
 func (g *Game) Right() {
-	nX := g.x + 1
-	if g.mayMoving(nX, g.y) {
-		g.move(nX, g.y)
-	}
+	g.moving(MoveRight)
 }
-func (g *Game) Up()   {}
-func (g *Game) Down() {}
+func (g *Game) Up() {
+	g.moving(MoveUp)
+}
+func (g *Game) Down() {
+	g.moving(MoveDown)
+}
