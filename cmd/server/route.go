@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func handleRoute(m tokenManager, w http.ResponseWriter, r *http.Request) {
+func handleRoute(m TokenManager, w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/login" {
 		err := r.ParseForm()
 		if err != nil {

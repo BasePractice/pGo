@@ -20,7 +20,7 @@ import (
 //go:embed sql/*.sql
 var migrations embed.FS
 
-type tokenManager interface {
+type TokenManager interface {
 	Token(token string) (*token, error)
 	Access(username, password string) (*token, error)
 }
@@ -146,7 +146,7 @@ func initScheme(db *sql.DB) {
 	}
 }
 
-func newTokenManager() tokenManager {
+func NewTokenManager() TokenManager {
 	db, err := sql.Open("sqlite3", "tm.db3")
 	if err != nil {
 		log.Fatal(err)

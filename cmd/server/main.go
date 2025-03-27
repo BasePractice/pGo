@@ -3,30 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 )
 
-func handleAccess(m tokenManager, w http.ResponseWriter, r *http.Request) {
-	tpl, err := template.ParseFS(resources, "resources/access.html")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	data := map[string]interface{}{
-		"agent": r.Header.Get("User-Agent"),
-	}
-	if err := tpl.Execute(w, data); err != nil {
-		return
-	}
-}
-
 func main() {
-	manager := newTokenManager()
+	manager := NewTokenManager()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		page, ok := pages[r.URL.Path]
+		page, ok := getPage(r.URL.Path)
 		if !ok {
 			handleRoute(manager, w, r)
 			return
@@ -36,7 +19,7 @@ func main() {
 			if err != nil {
 				switch {
 				case errors.Is(err, http.ErrNoCookie):
-					handleAccess(manager, w, r)
+					handleAccess(w, r)
 					return
 				default:
 					http.Error(w, err.Error(), http.StatusInternalServerError)
