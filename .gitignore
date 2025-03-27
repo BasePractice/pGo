@@ -27,4 +27,3 @@ go.work.sum
 .idea
 tm.db3
 cmd/server/resources/client.wasm
-go.sum
