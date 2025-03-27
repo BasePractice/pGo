@@ -25,3 +25,6 @@ go.work.sum
 .env
 .bin
 .idea
+tm.db3
+cmd/server/resources/client.wasm
+go.sum

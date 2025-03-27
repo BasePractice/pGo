@@ -5,5 +5,5 @@
 
 ```shell
 go build -o .bin/server cmd/server/main.go
-GOOS=js GOARCH=wasm go build -o .bin/client.wasm cmd/client/main.go
+GOOS=js GOARCH=wasm go build -o cmd/server/resources/client.wasm cmd/client/main.go
 ```
