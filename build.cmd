@@ -1,6 +1,6 @@
 @echo off
 
-go build -o .bin/server sokoban/cmd/server
+go build -o .bin/server ./cmd/server
 set GOOS=js
 set GOARCH=wasm
-go build -o cmd/server/resources/client.wasm sokoban/cmd/client
+go build -o cmd/server/resources/client.wasm ./cmd/client

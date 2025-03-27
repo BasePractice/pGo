@@ -19,9 +19,9 @@ jobs:
           go-version: '1.24'
 
       - name: Build server
-        run: go build sokoban/cmd/server
+        run: go build ./cmd/server
       - name: Build client
-        run: GOOS=js GOARCH=wasm go build sokoban/cmd/client
+        run: GOOS=js GOARCH=wasm go build ./cmd/client
 
       - name: Test
         run: go test -v ./...
