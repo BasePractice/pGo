@@ -3,11 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/stdiopt/gowasm-experiments/arty/painter"
 	"image/color"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
+	"github.com/stdiopt/gowasm-experiments/arty/painter"
 )
 
 func main() {

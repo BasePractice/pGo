@@ -1,6 +1,8 @@
 package game
 
-import "sokoban/game/maps"
+import (
+	"sokoban/game/maps"
+)
 
 var (
 	MoveLeft  = mover{dX: -1, dY: 0}
@@ -20,18 +22,18 @@ type Game struct {
 	v       [][]maps.Tail
 	changed bool
 	done    bool
-	d       Updater
+	u       Updater
 	x       int
 	y       int
 }
 
 type Updater interface {
-	Update(v [][]maps.Tail)
+	UpdateMap(v [][]maps.Tail)
 }
 
 type EmptyUpdater struct{}
 
-func (e EmptyUpdater) Update(v [][]maps.Tail) {
+func (e EmptyUpdater) UpdateMap(v [][]maps.Tail) {
 
 }
 
@@ -42,25 +44,25 @@ type Mover interface {
 	Down()
 }
 
-func Ctor(mapName string, drawer Updater) (*Game, error) {
+func Ctor(mapName string, updater Updater) (*Game, error) {
 	m := maps.Map{}
 	err := FileUnmarshal(mapName, &m)
 	if err != nil {
 		return nil, err
 	}
-	x := 0
-	y := 0
-	for i := 0; i < m.Height; i++ {
-		for j := 0; j < m.Width; j++ {
-			v := *m.At(i, j)
+	xPlayer := 0
+	yPlayer := 0
+	for y := 0; y < m.Height; y++ {
+		for x := 0; x < m.Width; x++ {
+			v := *m.At(x, y)
 			if v == maps.TailPlayer {
-				x = j
-				y = i
+				xPlayer = x
+				yPlayer = y
 				break
 			}
 		}
 	}
-	return &Game{0, mapName, m.Values, false, false, drawer, x, y}, nil
+	return &Game{0, mapName, m.Values, false, false, updater, xPlayer, yPlayer}, nil
 }
 
 func (g *Game) moviePlayerTo(x, y int) {
@@ -101,7 +103,7 @@ func (g *Game) moving(to mover) {
 func (g *Game) movePlayer(x, y int) {
 	if g.x != x || g.y != y {
 		g.moviePlayerTo(x, y)
-		g.d.Update(g.v)
+		g.u.UpdateMap(g.v)
 		g.Steps++
 	}
 	g.x = x
@@ -141,4 +143,11 @@ func (g *Game) Up() {
 }
 func (g *Game) Down() {
 	g.moving(MoveDown)
+}
+
+func (g *Game) Updater(u Updater) {
+	g.u = u
+	if u != nil {
+		u.UpdateMap(g.v)
+	}
 }
