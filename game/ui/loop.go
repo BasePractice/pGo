@@ -1,3 +1,5 @@
+//go:build windows || darwin || wasm || js
+
 package ui
 
 import (
