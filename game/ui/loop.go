@@ -37,7 +37,9 @@ type Loop struct {
 }
 
 func Ctor(g *game.Game) *Loop {
-	return &Loop{game: g, bord: [][]maps.Tail{}}
+	loop := &Loop{game: g, bord: [][]maps.Tail{}}
+	g.Updater(loop)
+	return loop
 }
 
 func getColor(v maps.Tail) color.Color {

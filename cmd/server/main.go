@@ -44,14 +44,24 @@ func main() {
 			Height: p.Height(),
 			Data:   p.ImageData(),
 		}})
-		// цикл обработки сообщений
+		cookie, err := r.Cookie("access")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		tok, err := manager.Token(cookie.Value)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		//_ = ws.WriteJSON("init")
 		for {
 			messageType, message, err := ws.ReadMessage()
 			if err != nil {
 				log.Println(err)
 				break
 			}
-			log.Printf("Received: %s", message)
+			log.Printf("[%s]: %s", tok.username, message)
 
 			if err := ws.WriteMessage(messageType, message); err != nil {
 				log.Println(err)

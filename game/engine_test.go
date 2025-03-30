@@ -1,8 +1,9 @@
 package game
 
 import (
-	"sokoban/game/maps"
 	"testing"
+
+	"sokoban/game/maps"
 )
 
 func TestEngine_Moving(t *testing.T) {

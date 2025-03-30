@@ -4,11 +4,12 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/lucasb-eyer/go-colorful"
 	"image/color"
 	"log"
 	"strconv"
 	"syscall/js"
+
+	"github.com/lucasb-eyer/go-colorful"
 
 	"github.com/stdiopt/gowasm-experiments/arty/painter"
 )

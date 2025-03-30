@@ -1,6 +1,9 @@
 package game
 
 import (
+	"strconv"
+	"strings"
+
 	"sokoban/game/maps"
 )
 
@@ -44,9 +47,27 @@ type Mover interface {
 	Down()
 }
 
-func Ctor(mapName string, updater Updater) (*Game, error) {
+func CtorLine(name, line string, width, height int) (*Game, error) {
 	m := maps.Map{}
-	err := FileUnmarshal(mapName, &m)
+	parts := strings.Split(line, ",")
+	xPlayer := 0
+	yPlayer := 0
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			v, _ := strconv.Atoi(parts[y*x*width])
+			m.Values[y][x] = maps.Tail(v)
+			if m.Values[y][x] == maps.TailPlayer {
+				xPlayer = x
+				yPlayer = y
+			}
+		}
+	}
+	return &Game{0, name, m.Values, false, false, nil, xPlayer, yPlayer}, nil
+}
+
+func CtorFile(filename string, updater Updater) (*Game, error) {
+	m := maps.Map{}
+	err := FileUnmarshal(filename, &m)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +83,7 @@ func Ctor(mapName string, updater Updater) (*Game, error) {
 			}
 		}
 	}
-	return &Game{0, mapName, m.Values, false, false, updater, xPlayer, yPlayer}, nil
+	return &Game{0, filename, m.Values, false, false, updater, xPlayer, yPlayer}, nil
 }
 
 func (g *Game) moviePlayerTo(x, y int) {
@@ -143,6 +164,17 @@ func (g *Game) Up() {
 }
 func (g *Game) Down() {
 	g.moving(MoveDown)
+}
+
+func (g *Game) IsWon() bool {
+	for y := 0; y < len(g.v); y++ {
+		for x := 0; x < len(g.v[y]); x++ {
+			if g.v[y][x] == maps.TailSpot {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (g *Game) Updater(u Updater) {

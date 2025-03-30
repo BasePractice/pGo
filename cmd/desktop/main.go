@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	g, _ := game.Ctor("resources/demo.json", nil)
+	g, _ := game.CtorFile("resources/demo.json", nil)
 	var desktop = ui.Ctor(g)
-	g.Updater(desktop)
 	desktop.Start()
 }
