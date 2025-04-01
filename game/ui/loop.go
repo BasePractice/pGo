@@ -119,6 +119,11 @@ func (d *Loop) Start() {
 	}
 }
 
+func (d *Loop) Refresh() {
+
+	_ = d.Update()
+}
+
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
 		delay    = 30

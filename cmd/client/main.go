@@ -64,6 +64,7 @@ func (c *WasmContext) initConnection() {
 				json.Unmarshal([]byte(data), &d)
 				if d.Width != 0 || d.Height != 0 {
 					c.game.UpdateLine("demo", d.Data, d.Width, d.Height)
+					c.loop.Refresh()
 				}
 				c.SetStatus(fmt.Sprintf("%+v", d))
 			} else {

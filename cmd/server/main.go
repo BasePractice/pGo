@@ -38,7 +38,7 @@ func main() {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		_ = ws.WriteJSON(ms{Width: 2, Height: 2, Data: "1,3,1,1"})
+		_ = ws.WriteJSON(ms{Width: 8, Height: 9, Data: "0,0,1,1,1,1,1,0,1,1,1,0,0,0,1,0,1,2,4,3,0,0,1,0,1,1,1,0,3,2,1,0,1,2,1,1,3,0,1,0,1,0,1,0,2,0,1,1,1,3,0,5,3,3,2,1,1,0,0,0,2,0,0,1,1,1,1,1,1,1,1,1"})
 		for {
 			messageType, message, err := ws.ReadMessage()
 			if err != nil {

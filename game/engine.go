@@ -82,7 +82,7 @@ func (g *Game) UpdateLine(name, line string, width, height int) {
 	}
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
-			v, _ := strconv.Atoi(parts[y*x*width])
+			v, _ := strconv.Atoi(parts[(y*width)+x])
 			g.v[y][x] = maps.Tail(v)
 			if g.v[y][x] == maps.TailPlayer {
 				g.x = x
