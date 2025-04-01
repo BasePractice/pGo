@@ -64,6 +64,9 @@ func getColor(v maps.Tail) color.Color {
 }
 
 func (d *Loop) UpdateMap(v [][]maps.Tail) {
+	if v == nil || len(v) == 0 {
+		return
+	}
 	d.bord = make([][]maps.Tail, len(v))
 	for i := range d.bord {
 		d.bord[i] = make([]maps.Tail, len(v))
@@ -97,9 +100,9 @@ func (d *Loop) Draw(screen *ebiten.Image) {
 	var size = screen.Bounds().Dx() / d.width
 	for y, yv := range d.bord {
 		for x, xv := range yv {
-			color := getColor(xv)
+			c := getColor(xv)
 			vector.DrawFilledRect(screen, float32(x*size), float32(y*size),
-				float32(size), float32(size), color, true)
+				float32(size), float32(size), c, true)
 		}
 	}
 }

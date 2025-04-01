@@ -8,7 +8,6 @@
             const go = new Go();
             WebAssembly.instantiateStreaming(fetch("client.wasm"), go.importObject).then((result) => {
                 go.run(result.instance);
-                token("{{.token}}");
             });
         } else {
             console.log("WebAssembly is not supported in your browser")
@@ -17,7 +16,6 @@
     <title>Sokoban</title>
 </head>
 <body>
-<canvas id="game_id"></canvas>
 <div id="status"></div>
 </body>
 </html>

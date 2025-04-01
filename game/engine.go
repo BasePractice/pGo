@@ -47,22 +47,8 @@ type Mover interface {
 	Down()
 }
 
-func CtorLine(name, line string, width, height int) (*Game, error) {
-	m := maps.Map{}
-	parts := strings.Split(line, ",")
-	xPlayer := 0
-	yPlayer := 0
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			v, _ := strconv.Atoi(parts[y*x*width])
-			m.Values[y][x] = maps.Tail(v)
-			if m.Values[y][x] == maps.TailPlayer {
-				xPlayer = x
-				yPlayer = y
-			}
-		}
-	}
-	return &Game{0, name, m.Values, false, false, nil, xPlayer, yPlayer}, nil
+func CtorNone() *Game {
+	return &Game{0, "none", make([][]maps.Tail, 0), false, false, nil, 0, 0}
 }
 
 func CtorFile(filename string, updater Updater) (*Game, error) {
@@ -84,6 +70,26 @@ func CtorFile(filename string, updater Updater) (*Game, error) {
 		}
 	}
 	return &Game{0, filename, m.Values, false, false, updater, xPlayer, yPlayer}, nil
+}
+
+func (g *Game) UpdateLine(name, line string, width, height int) {
+	parts := strings.Split(line, ",")
+	g.x = 0
+	g.y = 0
+	g.v = make([][]maps.Tail, height)
+	for y := 0; y < height; y++ {
+		g.v[y] = make([]maps.Tail, width)
+	}
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			v, _ := strconv.Atoi(parts[y*x*width])
+			g.v[y][x] = maps.Tail(v)
+			if g.v[y][x] == maps.TailPlayer {
+				g.x = x
+				g.y = y
+			}
+		}
+	}
 }
 
 func (g *Game) moviePlayerTo(x, y int) {
