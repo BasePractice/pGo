@@ -3,6 +3,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"sokoban/game"
@@ -52,16 +53,19 @@ func (c *WasmContext) initConnection() {
 		})
 		defer onopen.Release()
 		onmessage := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+			type ms struct {
+				Width  int    `json:"width"`
+				Height int    `json:"height"`
+				Data   string `json:"data"`
+			}
 			if len(args) > 0 && args[0].Type() == js.TypeObject {
+				var d ms
 				data := args[0].Get("data").String()
-				width := args[0].Get("width").Type() == js.TypeNumber
-				height := args[0].Get("height").Type() == js.TypeNumber
-				if width && height {
-					width := args[0].Get("width").Int()
-					height := args[0].Get("height").Int()
-					c.game.UpdateLine("demo", data, width, height)
+				json.Unmarshal([]byte(data), &d)
+				if d.Width != 0 || d.Height != 0 {
+					c.game.UpdateLine("demo", d.Data, d.Width, d.Height)
 				}
-				c.SetStatus(fmt.Sprintf("%+v", args[0]))
+				c.SetStatus(fmt.Sprintf("%+v", d))
 			} else {
 				c.SetStatus(fmt.Sprintf("Illegal arguments: %+v", args))
 			}

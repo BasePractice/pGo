@@ -146,15 +146,19 @@ func (g *Game) moveBox(x, y int) {
 }
 
 func (g *Game) mayMoving(x, y int) bool {
-	if g.v[y][x] == maps.TailNone || g.v[y][x] == maps.TailSpot {
-		return true
+	if len(g.v) > x && x >= 0 && len(g.v[x]) > y && y >= 0 {
+		if g.v[y][x] == maps.TailNone || g.v[y][x] == maps.TailSpot {
+			return true
+		}
 	}
 	return false
 }
 
 func (g *Game) isBox(x, y int) bool {
-	if g.v[y][x] == maps.TailBox || g.v[y][x] == maps.TailBoxAndSpot {
-		return true
+	if len(g.v) > x && x >= 0 && len(g.v[x]) > y && y >= 0 {
+		if g.v[y][x] == maps.TailBox || g.v[y][x] == maps.TailBoxAndSpot {
+			return true
+		}
 	}
 	return false
 }
